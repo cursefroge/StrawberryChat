@@ -1,0 +1,11 @@
+name: StrawberryChat
+version: '1.4.0'
+main: dev.curseforged.strawberryChat.StrawberryChat
+api-version: '1.21'
+authors: [ cursefroge ]
+description: Custom chat plugin for The Strawberry Farm
+bootstrapper: dev.curseforged.strawberryChat.StrawberryChatBootstrap
+permissions:
+  strawberrychat.velocity:
+    description: Allows using /velocity to apply velocity to players
+    default: op
