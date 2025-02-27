@@ -1,6 +1,7 @@
 package dev.curseforged.strawberryChat
 
-import dev.curseforged.strawberryChat.util.convertToReadable
+import dev.curseforged.strawberryChat.util.convertToReadableTime
+import dev.curseforged.strawberryChat.util.convertToReadableDate
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.audience.Audience
@@ -31,8 +32,9 @@ class ChatListener : Listener, ChatRenderer {
         val hoverEvent = sourceDisplayName
             .append(Component.text("\nRole: ")).append(playerTeam?.prefix() ?: Component.empty()).append(playerTeam?.displayName() ?: Component.text("None"))
             .appendNewline()
-            .append(Component.text("Member since: ")).append(Component.text(
-                convertToReadable(source.firstPlayed)))
+            .append(Component.text("Member since: ")).append(Component.text(convertToReadableDate(source.firstPlayed)))
+            .appendNewline()
+            .append(Component.text("Message time: ")).append(Component.text(convertToReadableTime(System.currentTimeMillis())))
                 .color(NamedTextColor.GRAY)
                 .style { it.hoverEvent(null).build() }
         
