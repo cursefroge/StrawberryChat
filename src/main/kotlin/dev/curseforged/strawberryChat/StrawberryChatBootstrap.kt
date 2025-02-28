@@ -95,13 +95,47 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 return@executes Command.SINGLE_SUCCESS
                             }
                     )
+                
+                val demoCommand = Commands.literal("demo")
+                    .requires { sender -> sender.sender.hasPermission("strawberrychat.demo") }
+                    .then(
+                        Commands.argument("players", ArgumentTypes.players())
+                            .executes { ctx ->
+                                val players = ctx.getArgument("players", PlayerSelectorArgumentResolver::class.java)
+                                    .resolve(ctx.getSource())
+                                players.forEach { player ->
+                                    player.showDemoScreen()
+                                }
+                                ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent demo packet to specified players!</aqua>")
+                                return@executes Command.SINGLE_SUCCESS
+                            }
+                    )
+                
+                val creditsCommand = Commands.literal("credits")
+                    .requires { sender -> sender.sender.hasPermission("strawberrychat.credits") }
+                    .then(
+                        Commands.argument("players", ArgumentTypes.players())
+                            .executes { ctx ->
+                                val players = ctx.getArgument("players", PlayerSelectorArgumentResolver::class.java)
+                                    .resolve(ctx.getSource())
+                                players.forEach { player ->
+                                    player.showWinScreen()
+                                }
+                                ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent credits packet to specified players!</aqua>")
+                                return@executes Command.SINGLE_SUCCESS
+                            }
+                    )
 
                 val builtWorldCommand = worldCommand.build()
                 val builtVelocityCommand = velocityCommand.build()
                 val builtCrashCommand = crashCommand.build()
+                val builtDemoCommand = demoCommand.build()
+                val builtCreditsCommand = creditsCommand.build()
                 commands.registrar().register(builtWorldCommand)
                 commands.registrar().register(builtVelocityCommand)
                 commands.registrar().register(builtCrashCommand)
+                commands.registrar().register(builtDemoCommand)
+                commands.registrar().register(builtCreditsCommand)
             }
         )
     }

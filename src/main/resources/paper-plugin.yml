@@ -9,3 +9,12 @@ permissions:
   strawberrychat.velocity:
     description: Allows using /velocity to apply velocity to players
     default: op
+  strawberrychat.crash:
+    description: Allows using /crash to attempt to crash specified players' clients
+    default: op
+  strawberrychat.demo:
+    description: Allows using /demo to show the demo screen to specified players
+    default: op
+  strawberrychat.credits:
+    description: Allows using /credits to show the end credit screen to specified players
+    default: op

@@ -55,8 +55,7 @@ class ChatListener : Listener, ChatRenderer {
             .color(if (greentext) NamedTextColor.GREEN else NamedTextColor.WHITE)
             .style { it.hoverEvent(null).build() }
 
-        return Component.empty()
-            .append(displayName)
+        return displayName
             .append(separator)
             .append(messageComponent)
     }
