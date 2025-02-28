@@ -91,7 +91,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
 
                                     }
                                 }
-                                ctx.getSource().sender.sendRichMessage("Successfully sent crash packet to specified players")
+                                ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent crash packet to specified players!</aqua>")
                                 return@executes Command.SINGLE_SUCCESS
                             }
                     )
