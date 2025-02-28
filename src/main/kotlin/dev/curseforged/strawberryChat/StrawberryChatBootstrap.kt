@@ -23,27 +23,20 @@ class StrawberryChatBootstrap : PluginBootstrap {
         context.lifecycleManager.registerEventHandler(
             LifecycleEvents.COMMANDS,
             commands@LifecycleEventHandler { commands ->
-                // command /world <worldName>
                 val worldCommand = Commands.literal("world")
+                    .requires { sender -> sender.executor is Player }
                     .then(
                         Commands.argument("worldName", ArgumentTypes.world())
                             .executes { ctx ->
                                 val world: World? = ctx.getArgument("worldName", World::class.java)
-                                if (ctx.getSource().executor is Player) {
-                                    val player = ctx.getSource().executor as Player
-                                    player.teleport(world!!.spawnLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
-                                    ctx.getSource().sender.sendRichMessage(
-                                        "Successfully teleported <player> to <aqua><world></aqua>",
-                                        Placeholder.component("player", player.name()),
-                                        Placeholder.unparsed("world", world.name)
-                                    )
-                                    return@executes Command.SINGLE_SUCCESS
-                                } else {
-                                    ctx.getSource().sender.sendRichMessage(
-                                        "Only players can use this command",
-                                    )
-                                    return@executes Command.SINGLE_SUCCESS
-                                }
+                                val player = ctx.getSource().executor as Player
+                                player.teleport(world!!.spawnLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
+                                ctx.getSource().sender.sendRichMessage(
+                                    "Successfully teleported <player> to <aqua><world></aqua>",
+                                    Placeholder.component("player", player.name()),
+                                    Placeholder.unparsed("world", world.name)
+                                )
+                                return@executes Command.SINGLE_SUCCESS
                             }
                     )
 
@@ -99,7 +92,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                     }
                                 }
                                 ctx.getSource().sender.sendRichMessage("Successfully sent crash packet to specified players")
-                                Command.SINGLE_SUCCESS
+                                return@executes Command.SINGLE_SUCCESS
                             }
                     )
 

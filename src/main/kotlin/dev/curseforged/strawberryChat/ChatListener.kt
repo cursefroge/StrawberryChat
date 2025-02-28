@@ -30,7 +30,8 @@ class ChatListener : Listener, ChatRenderer {
         
         val playerTeam = source.scoreboard.getEntryTeam(source.name)
         val hoverEvent = sourceDisplayName
-            .append(Component.text("\nRole: ")).append(playerTeam?.prefix() ?: Component.empty()).append(playerTeam?.displayName() ?: Component.text("None"))
+            .appendNewline()
+            .append(Component.text("Role: ")).append(playerTeam?.prefix() ?: Component.empty()).append(playerTeam?.displayName() ?: Component.text("None"))
             .appendNewline()
             .append(Component.text("Member since: ")).append(Component.text(convertToReadableDate(source.firstPlayed)))
             .appendNewline()
