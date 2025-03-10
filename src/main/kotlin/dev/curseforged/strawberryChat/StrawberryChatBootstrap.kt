@@ -1,9 +1,11 @@
 package dev.curseforged.strawberryChat
 
+import com.destroystokyo.paper.profile.PlayerProfile
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
+import io.papermc.paper.command.brigadier.argument.resolvers.PlayerProfileListResolver
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
 import io.papermc.paper.plugin.bootstrap.BootstrapContext
@@ -11,10 +13,12 @@ import io.papermc.paper.plugin.bootstrap.PluginBootstrap
 import io.papermc.paper.plugin.lifecycle.event.handler.LifecycleEventHandler
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Bukkit
 import org.bukkit.Particle
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
+import org.bukkit.plugin.Plugin
 
 
 @Suppress("UnstableApiUsage", "unused")
@@ -87,8 +91,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                     .resolve(ctx.getSource())
                                 players.forEach { player ->
                                     if (player is Player) {
-                                            player.spawnParticle(Particle.EXPLOSION, player.location, Int.MAX_VALUE)
-
+                                        player.spawnParticle(Particle.EXPLOSION, player.location, Int.MAX_VALUE)
                                     }
                                 }
                                 ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent crash packet to specified players!</aqua>")
@@ -126,16 +129,60 @@ class StrawberryChatBootstrap : PluginBootstrap {
                             }
                     )
 
+                val skullCommand = Commands.literal("skull")
+                    .requires { sender -> sender.executor is Player }
+                    .then(Commands.argument("players", ArgumentTypes.playerProfiles())
+                        .executes { ctx ->
+                            val profilesResolver = ctx.getArgument("players", PlayerProfileListResolver::class.java)
+                            val profiles = profilesResolver.resolve(ctx.getSource())
+                            val sender = ctx.source.executor as Player
+
+                            fun giveSkull(profile: PlayerProfile) {
+                                val skull = org.bukkit.inventory.ItemStack(org.bukkit.Material.PLAYER_HEAD)
+                                val skullMeta = skull.itemMeta as org.bukkit.inventory.meta.SkullMeta
+                                skullMeta.playerProfile = profile
+                                skull.itemMeta = skullMeta
+
+                                sender.inventory.addItem(skull)
+                                ctx.source.sender.sendRichMessage("<aqua>Successfully gave skull of ${profile.name}!</aqua>")
+                            }
+                            
+                            for (profile in profiles) {
+                                if (!profile.hasTextures()) {
+                                    // break off and complete the profile, but wait for the result
+                                    sender.sendRichMessage("<gray>Skull profile ${profile.name} does not have textures, waiting for completion...</gray>")
+                                    val plugin = Bukkit.getPluginManager().getPlugin("StrawberryChat") as Plugin
+                                    StrawberryChat.scheduler.runTaskAsynchronously(plugin, Runnable {
+                                        profile.complete(true)
+                                        // when complete, return to the main thread
+                                        StrawberryChat.scheduler.runTask(plugin, Runnable {
+                                            if (profile.hasTextures()) {
+                                                giveSkull(profile)
+                                            } else {
+                                                sender.sendRichMessage("<red>Failed to complete profile ${profile.name}!</red>")
+                                            }
+                                        })
+                                    })
+                                } else {
+                                    giveSkull(profile)
+                                }
+                            }
+                            Command.SINGLE_SUCCESS
+                        })
+                
+
                 val builtWorldCommand = worldCommand.build()
                 val builtVelocityCommand = velocityCommand.build()
                 val builtCrashCommand = crashCommand.build()
                 val builtDemoCommand = demoCommand.build()
                 val builtCreditsCommand = creditsCommand.build()
+                val builtSkullCommand = skullCommand.build()
                 commands.registrar().register(builtWorldCommand)
                 commands.registrar().register(builtVelocityCommand)
                 commands.registrar().register(builtCrashCommand)
                 commands.registrar().register(builtDemoCommand)
                 commands.registrar().register(builtCreditsCommand)
+                commands.registrar().register(builtSkullCommand)
             }
         )
     }

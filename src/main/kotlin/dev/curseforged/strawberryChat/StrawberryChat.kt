@@ -2,11 +2,14 @@ package dev.curseforged.strawberryChat
 
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitScheduler
 
 class StrawberryChat : JavaPlugin() {
     
     companion object {
         lateinit var pluginConfig: FileConfiguration
+            private set
+        lateinit var scheduler: BukkitScheduler
             private set
     }
 
@@ -14,6 +17,7 @@ class StrawberryChat : JavaPlugin() {
         // Plugin startup logic
         this.saveDefaultConfig()
         pluginConfig = this.config
+        scheduler = this.server.scheduler
         // set companion object config to plugin config
         server.pluginManager.registerEvents(ChatListener(), this)
         server.pluginManager.registerEvents(PlayerJoinListener(), this)
