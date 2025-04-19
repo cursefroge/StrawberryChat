@@ -2,11 +2,11 @@ plugins {
     kotlin("jvm") version "2.1.20-Beta1"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("io.papermc.paperweight.userdev") version "2.0.0-SNAPSHOT"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.16"
 }
 
 group = "dev.curseforged"
-version = "1.7.0"
+version = "1.7.2"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ dependencies {
     // don't depend on paper-api because we have the dev bundle
     //compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.5-R0.1-SNAPSHOT")
 }
 
 val targetJavaVersion = 21
@@ -56,5 +56,5 @@ tasks.shadowJar {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21.4")
+    minecraftVersion("1.21.5")
 }

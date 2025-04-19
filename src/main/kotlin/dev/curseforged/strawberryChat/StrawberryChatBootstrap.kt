@@ -17,7 +17,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Particle
 import org.bukkit.World
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 
 
@@ -26,7 +25,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
     override fun bootstrap(context: BootstrapContext) {
         context.lifecycleManager.registerEventHandler(
             LifecycleEvents.COMMANDS,
-            commands@LifecycleEventHandler { commands ->
+            LifecycleEventHandler { commands ->
                 val worldCommand = Commands.literal("world")
                     .requires { sender -> sender.executor is Player }
                     .then(
@@ -34,7 +33,12 @@ class StrawberryChatBootstrap : PluginBootstrap {
                             .executes { ctx ->
                                 val world: World? = ctx.getArgument("worldName", World::class.java)
                                 val player = ctx.getSource().executor as Player
-                                player.teleport(world!!.spawnLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
+                                // teleport player to the world
+                                if (world == null) {
+                                    ctx.getSource().sender.sendRichMessage("<red>World not found!</red>")
+                                    return@executes Command.SINGLE_SUCCESS
+                                }
+                                //player.teleport(world!!.spawnLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
                                 ctx.getSource().sender.sendRichMessage(
                                     "Successfully teleported <player> to <aqua><world></aqua>",
                                     Placeholder.component("player", player.name()),
@@ -130,7 +134,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
                     )
 
                 val skullCommand = Commands.literal("skull")
-                    .requires { sender -> sender.executor is Player }
+                    .requires { sender -> sender.executor is Player && sender.sender.hasPermission("strawberrychat.skull") }
                     .then(Commands.argument("players", ArgumentTypes.playerProfiles())
                         .executes { ctx ->
                             val profilesResolver = ctx.getArgument("players", PlayerProfileListResolver::class.java)
@@ -169,6 +173,32 @@ class StrawberryChatBootstrap : PluginBootstrap {
                             }
                             Command.SINGLE_SUCCESS
                         })
+
+                val toggleNametagCommand = Commands.literal("togglenametag")
+                    .requires { sender -> sender.executor is Player && sender.sender.hasPermission("strawberrychat.togglenametag") }
+                    .executes { ctx ->
+                        val player = ctx.source.executor as Player
+                        val teamName = "__strawberrychat_hidden_nametag"
+                        var team = player.scoreboard.getTeam(teamName)
+
+                        if (team == null) {
+                            team = player.scoreboard.registerNewTeam(teamName).apply {
+                                setOption(org.bukkit.scoreboard.Team.Option.NAME_TAG_VISIBILITY, org.bukkit.scoreboard.Team.OptionStatus.NEVER)
+                            }
+                        }
+
+                        team.let {
+                            if (it.hasEntry(player.name)) {
+                                it.removeEntry(player.name)
+                                player.sendRichMessage("<aqua>Successfully enabled nametag!</aqua>")
+                            } else {
+                                it.addEntry(player.name)
+                                player.sendRichMessage("<aqua>Successfully disabled nametag!</aqua>")
+                            }
+                        }
+
+                        return@executes Command.SINGLE_SUCCESS
+                    }
                 
 
                 val builtWorldCommand = worldCommand.build()
@@ -177,12 +207,14 @@ class StrawberryChatBootstrap : PluginBootstrap {
                 val builtDemoCommand = demoCommand.build()
                 val builtCreditsCommand = creditsCommand.build()
                 val builtSkullCommand = skullCommand.build()
+                val builtToggleNametagCommand = toggleNametagCommand.build()
                 commands.registrar().register(builtWorldCommand)
                 commands.registrar().register(builtVelocityCommand)
                 commands.registrar().register(builtCrashCommand)
                 commands.registrar().register(builtDemoCommand)
                 commands.registrar().register(builtCreditsCommand)
                 commands.registrar().register(builtSkullCommand)
+                commands.registrar().register(builtToggleNametagCommand)
             }
         )
     }

@@ -1,5 +1,5 @@
 name: StrawberryChat
-version: '1.7.0'
+version: '1.7.2'
 main: dev.curseforged.strawberryChat.StrawberryChat
 api-version: '1.21'
 authors: [ cursefroge ]
@@ -18,3 +18,6 @@ permissions:
   strawberrychat.credits:
     description: Allows using /credits to show the end credit screen to specified players
     default: op
+  strawberrychat.skull:
+    description: Allows using /skull to give the player a custom skull
+    default: true
