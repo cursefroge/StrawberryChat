@@ -17,6 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Particle
 import org.bukkit.World
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 
 
@@ -38,7 +39,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                     ctx.getSource().sender.sendRichMessage("<red>World not found!</red>")
                                     return@executes Command.SINGLE_SUCCESS
                                 }
-                                //player.teleport(world!!.spawnLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
+                                player.teleport(world.spawnLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
                                 ctx.getSource().sender.sendRichMessage(
                                     "Successfully teleported <player> to <aqua><world></aqua>",
                                     Placeholder.component("player", player.name()),
