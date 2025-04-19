@@ -174,32 +174,6 @@ class StrawberryChatBootstrap : PluginBootstrap {
                             }
                             Command.SINGLE_SUCCESS
                         })
-
-                val toggleNametagCommand = Commands.literal("togglenametag")
-                    .requires { sender -> sender.executor is Player && sender.sender.hasPermission("strawberrychat.togglenametag") }
-                    .executes { ctx ->
-                        val player = ctx.source.executor as Player
-                        val teamName = "__strawberrychat_hidden_nametag"
-                        var team = player.scoreboard.getTeam(teamName)
-
-                        if (team == null) {
-                            team = player.scoreboard.registerNewTeam(teamName).apply {
-                                setOption(org.bukkit.scoreboard.Team.Option.NAME_TAG_VISIBILITY, org.bukkit.scoreboard.Team.OptionStatus.NEVER)
-                            }
-                        }
-
-                        team.let {
-                            if (it.hasEntry(player.name)) {
-                                it.removeEntry(player.name)
-                                player.sendRichMessage("<aqua>Successfully enabled nametag!</aqua>")
-                            } else {
-                                it.addEntry(player.name)
-                                player.sendRichMessage("<aqua>Successfully disabled nametag!</aqua>")
-                            }
-                        }
-
-                        return@executes Command.SINGLE_SUCCESS
-                    }
                 
 
                 val builtWorldCommand = worldCommand.build()
@@ -208,14 +182,12 @@ class StrawberryChatBootstrap : PluginBootstrap {
                 val builtDemoCommand = demoCommand.build()
                 val builtCreditsCommand = creditsCommand.build()
                 val builtSkullCommand = skullCommand.build()
-                val builtToggleNametagCommand = toggleNametagCommand.build()
                 commands.registrar().register(builtWorldCommand)
                 commands.registrar().register(builtVelocityCommand)
                 commands.registrar().register(builtCrashCommand)
                 commands.registrar().register(builtDemoCommand)
                 commands.registrar().register(builtCreditsCommand)
                 commands.registrar().register(builtSkullCommand)
-                commands.registrar().register(builtToggleNametagCommand)
             }
         )
     }
