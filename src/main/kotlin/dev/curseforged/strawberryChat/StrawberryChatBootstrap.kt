@@ -28,7 +28,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
             LifecycleEvents.COMMANDS,
             LifecycleEventHandler { commands ->
                 val worldCommand = Commands.literal("world")
-                    .requires { sender -> sender.executor is Player }
+                    .requires { sender -> sender.executor is Player && sender.sender.hasPermission("strawberrychat.world") }
                     .then(
                         Commands.argument("worldName", ArgumentTypes.world())
                             .executes { ctx ->

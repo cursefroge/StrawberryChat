@@ -11,15 +11,20 @@ class PlayerJoinListener : Listener {
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         // tell player they have permission level 2
-        event.player.sendOpLevel(2)
-        // send header and footer for tablist
-        val header: Component = MiniMessage.miniMessage().deserialize(
-            "<bold><gradient:#ff0000:#ff69b4>The Strawberry Farm</gradient></bold>"
-        )
-        val randomQuote = StrawberryChat.pluginConfig.getStringList("quotes").random()
-        val footer: Component = MiniMessage.miniMessage().deserialize(
-            "<gradient:#0000ff:#800080>$randomQuote</gradient>"
-        )
-        event.player.sendPlayerListHeaderAndFooter(header, footer)
+        if (StrawberryChat.pluginConfig.getBoolean("spoof-op")) {
+            event.player.sendOpLevel(2)
+        }
+
+        if (StrawberryChat.pluginConfig.getBoolean("tablist.enabled")) {
+            // send header and footer for tablist
+            val header: Component = MiniMessage.miniMessage().deserialize(
+                "<bold><gradient:#ff0000:#ff69b4>The Strawberry Farm</gradient></bold>"
+            )
+            val randomQuote = StrawberryChat.pluginConfig.getStringList("tablist.quotes").random()
+            val footer: Component = MiniMessage.miniMessage().deserialize(
+                "<gradient:#0000ff:#800080>$randomQuote</gradient>"
+            )
+            event.player.sendPlayerListHeaderAndFooter(header, footer)
+        }
     }
 }

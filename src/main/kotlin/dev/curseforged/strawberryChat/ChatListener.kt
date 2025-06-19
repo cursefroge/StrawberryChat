@@ -16,8 +16,21 @@ class ChatListener : Listener, ChatRenderer {
     // Disable FreedomChat chat rewrite!
     @EventHandler()
     fun onChat(event: AsyncChatEvent) {
+        // cancel event if strip-message-signatures is true
+        if (StrawberryChat.pluginConfig.getBoolean("strip-message-signatures")) {
+            event.isCancelled = true
+            // call renderer and broadcast message
+            for (viewer in event.viewers()) {
+                val renderedMessage = render(
+                    event.player,
+                    event.player.displayName(),
+                    event.message(),
+                    viewer
+                )
+                viewer.sendMessage(renderedMessage)
+            }
+        }
         event.renderer(this)
-        
     }
 
     override fun render(
@@ -26,8 +39,7 @@ class ChatListener : Listener, ChatRenderer {
         message: Component,
         viewer: Audience
     ): Component {
-        
-        
+
         val playerTeam = source.scoreboard.getEntryTeam(source.name)
         val hoverEvent = sourceDisplayName
             .appendNewline()

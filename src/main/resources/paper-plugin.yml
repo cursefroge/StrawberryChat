@@ -1,7 +1,7 @@
 name: StrawberryChat
-version: '1.7.2'
+version: '2.0.0'
 main: dev.curseforged.strawberryChat.StrawberryChat
-api-version: '1.21'
+api-version: '1.21.5'
 authors: [ cursefroge ]
 description: Custom chat plugin for The Strawberry Farm
 bootstrapper: dev.curseforged.strawberryChat.StrawberryChatBootstrap
@@ -20,4 +20,7 @@ permissions:
     default: op
   strawberrychat.skull:
     description: Allows using /skull to give the player a custom skull
-    default: true
+    default: op
+  strawberrychat.world:
+    description: Allows using /world to change the player's world
+    default: op

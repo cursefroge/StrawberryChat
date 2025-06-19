@@ -1,2 +1,9 @@
-quotes:
-  - "if at first you don't succeed, don't try again. you had one chance."
+tablist:
+    enabled: true
+    quotes:
+      - "if at first you don't succeed, don't try again. you had one chance."
+spoof-op: true
+chat-formatter: true
+disallow-kill-potions: true
+strip-message-signatures: false
+send-prevents-reports: false
