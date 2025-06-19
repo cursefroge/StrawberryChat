@@ -11,7 +11,7 @@ data class CustomServerMetadata(
     val description: Component,
     val players: ServerStatus.Players?,
     val version: ServerStatus.Version,
-    val favicon: String?,
+    val favicon: ServerStatus.Favicon?,
     val enforcesSecureChat: Boolean,
     val preventsChatReports: Boolean
 ) {
@@ -21,11 +21,11 @@ data class CustomServerMetadata(
                 ComponentSerialization.CODEC.fieldOf("description").forGetter { it: CustomServerMetadata -> it.description },
                 ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter { it: CustomServerMetadata -> Optional.ofNullable(it.players) },
                 ServerStatus.Version.CODEC.fieldOf("version").forGetter { it: CustomServerMetadata -> it.version },
-                Codec.STRING.optionalFieldOf("favicon").forGetter { it: CustomServerMetadata -> Optional.ofNullable(it.favicon) },
+                ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter { it: CustomServerMetadata -> Optional.ofNullable(it.favicon) },
                 Codec.BOOL.fieldOf("enforcesSecureChat").forGetter { it: CustomServerMetadata -> it.enforcesSecureChat },
                 Codec.BOOL.fieldOf("preventsChatReports").forGetter { it: CustomServerMetadata -> it.preventsChatReports }
             ).apply(instance) { desc: Component, playersOpt: Optional<ServerStatus.Players>, version: ServerStatus.Version,
-                                faviconOpt: Optional<String>, enforce: Boolean, prevent: Boolean ->
+                                faviconOpt: Optional<ServerStatus.Favicon>, enforce: Boolean, prevent: Boolean ->
                 CustomServerMetadata(
                     desc,
                     playersOpt.orElse(null),

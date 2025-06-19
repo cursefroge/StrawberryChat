@@ -1,5 +1,5 @@
 name: StrawberryChat
-version: '2.0.1'
+version: '2.0.2'
 main: dev.curseforged.strawberryChat.StrawberryChat
 api-version: '1.21.5'
 authors: [ cursefroge ]

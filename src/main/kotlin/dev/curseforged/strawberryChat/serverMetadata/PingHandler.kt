@@ -20,9 +20,9 @@ class PingHandler : MessageToByteEncoder<Packet<*>>() {
                 status.description,
                 status.players.orElse(null),
                 status.version.orElse(null),
-                status.favicon.orElse(null)?.toString(), // Convert Favicon to String?
+                status.favicon.orElse(null),
                 status.enforcesSecureChat,
-                true // preventsChatReports = true
+                preventsChatReports = true
             )
             val buf = FriendlyByteBuf(out)
             buf.writeVarInt(0x00) // STATUS_RESPONSE_PACKET_ID
