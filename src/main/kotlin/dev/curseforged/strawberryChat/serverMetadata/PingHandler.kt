@@ -15,6 +15,7 @@ class PingHandler : MessageToByteEncoder<Packet<*>>() {
     override fun encode(ctx: ChannelHandlerContext, msg: Packet<*>, out: ByteBuf) {
         if (msg is ClientboundStatusResponsePacket) {
             val status = msg.status
+            // spoof enforcesSecureChat and preventsChatReports to true?
             val customStatus = CustomServerMetadata(
                 status.description,
                 status.players.orElse(null),

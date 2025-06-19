@@ -1,12 +1,13 @@
 package dev.curseforged.strawberryChat
 
 import dev.curseforged.strawberryChat.serverMetadata.PingHandler
+import io.netty.channel.Channel
+import io.papermc.paper.network.ChannelInitializeListenerHolder.addListener
 import net.kyori.adventure.key.Key
+import net.minecraft.network.chat.Component
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitScheduler
-import io.papermc.paper.network.ChannelInitializeListenerHolder.addListener
-import io.netty.channel.Channel
 
 class StrawberryChat : JavaPlugin() {
     

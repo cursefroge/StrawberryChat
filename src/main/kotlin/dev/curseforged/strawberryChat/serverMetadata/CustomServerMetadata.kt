@@ -3,6 +3,7 @@ package dev.curseforged.strawberryChat.serverMetadata
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.protocol.status.ServerStatus
 import java.util.Optional
 
@@ -15,15 +16,9 @@ data class CustomServerMetadata(
     val preventsChatReports: Boolean
 ) {
     companion object {
-        // Custom codec for Component since Component.CODEC doesn't exist
-        private val COMPONENT_CODEC: Codec<Component> = Codec.STRING.xmap(
-            { str: String -> Component.literal(str) },
-            { comp: Component -> comp.string }
-        )
-
         val CODEC: Codec<CustomServerMetadata> = RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<CustomServerMetadata> ->
             instance.group(
-                COMPONENT_CODEC.fieldOf("description").forGetter { it: CustomServerMetadata -> it.description },
+                ComponentSerialization.CODEC.fieldOf("description").forGetter { it: CustomServerMetadata -> it.description },
                 ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter { it: CustomServerMetadata -> Optional.ofNullable(it.players) },
                 ServerStatus.Version.CODEC.fieldOf("version").forGetter { it: CustomServerMetadata -> it.version },
                 Codec.STRING.optionalFieldOf("favicon").forGetter { it: CustomServerMetadata -> Optional.ofNullable(it.favicon) },
