@@ -17,7 +17,7 @@ class ChatListener : Listener, ChatRenderer {
     @EventHandler()
     fun onChat(event: AsyncChatEvent) {
         // cancel event if strip-message-signatures is true
-        if (StrawberryChat.pluginConfig.getBoolean("strip-message-signatures")) {
+        if (StrawberryChat.pluginConfig.getBoolean("chat.strip-message-signatures")) {
             event.isCancelled = true
             // call renderer and broadcast message
             for (viewer in event.viewers()) {

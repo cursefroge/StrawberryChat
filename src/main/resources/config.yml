@@ -2,8 +2,16 @@ tablist:
     enabled: true
     quotes:
       - "if at first you don't succeed, don't try again. you had one chance."
+
+chat:
+    # Enable custom chat formatter. Required to prevent chat reports.
+    formatter: true
+    strip-message-signatures: false
+# Tell all clients that they are OP, even if they are not
 spoof-op: true
-chat-formatter: true
+# Disallow kill potions (high-level instant health potions)
 disallow-kill-potions: true
-strip-message-signatures: false
+# Send prevents reports to NoChatReports
 send-prevents-reports: false
+# Tell the vanilla client the server enforces chat signatures, hiding the "messages can't be verified" toast
+spoof-enforces-signatures: false

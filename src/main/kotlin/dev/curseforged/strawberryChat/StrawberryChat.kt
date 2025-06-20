@@ -4,7 +4,6 @@ import dev.curseforged.strawberryChat.serverMetadata.PingHandler
 import io.netty.channel.Channel
 import io.papermc.paper.network.ChannelInitializeListenerHolder.addListener
 import net.kyori.adventure.key.Key
-import net.minecraft.network.chat.Component
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitScheduler
@@ -24,14 +23,14 @@ class StrawberryChat : JavaPlugin() {
         pluginConfig = this.config
         scheduler = this.server.scheduler
         // set companion object config to plugin config
-        if (pluginConfig.getBoolean("chat-formatter")) {
+        if (pluginConfig.getBoolean("chat.formatter")) {
             server.pluginManager.registerEvents(ChatListener(), this)
         }
         server.pluginManager.registerEvents(PlayerJoinListener(), this)
         if (pluginConfig.getBoolean("disallow-kill-potions")) {
             server.pluginManager.registerEvents(PotionUseListener(), this)
         }
-        if (pluginConfig.getBoolean("send-prevents-reports")) {
+        if (pluginConfig.getBoolean("send-prevents-reports") || pluginConfig.getBoolean("spoof-enforces-signatures")) {
             addListener(Key.key("strawberrychat", "ping_handler")) { channel: Channel ->
                 channel.pipeline().addAfter("packet_handler", "strawberrychat_ping_handler", PingHandler())
             }
