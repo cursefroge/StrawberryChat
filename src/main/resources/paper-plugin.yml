@@ -27,3 +27,6 @@ permissions:
   strawberrychat.allow-gamemode-change:
     description: Allows using the gamemode switcher
     default: op
+  strawberrychat.fly:
+    description: Allows using /fly to give a player the fly ability
+    default: op

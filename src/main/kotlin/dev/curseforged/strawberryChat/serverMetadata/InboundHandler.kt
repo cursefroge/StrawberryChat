@@ -20,7 +20,6 @@ class InboundHandler(private val player: Player) : ChannelInboundHandlerAdapter(
                         GameType.SURVIVAL -> GameMode.SURVIVAL
                         GameType.ADVENTURE -> GameMode.ADVENTURE
                         GameType.SPECTATOR -> GameMode.SPECTATOR
-                        else -> (player.bukkitEntity as CraftPlayer).gameMode
                     }
                 } else {
                     // pass the packet further

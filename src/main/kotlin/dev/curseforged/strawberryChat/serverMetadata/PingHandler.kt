@@ -7,12 +7,8 @@ import io.netty.channel.ChannelPromise
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.protocol.game.ClientboundEntityEventPacket
 import net.minecraft.network.protocol.game.ClientboundLoginPacket
-import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket
 import net.minecraft.world.entity.EntityEvent
-import net.minecraft.world.level.Level
-import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.CraftWorld
 
 class PingHandler : ChannelOutboundHandlerAdapter() {
     override fun write(

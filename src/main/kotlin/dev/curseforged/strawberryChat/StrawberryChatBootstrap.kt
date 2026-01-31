@@ -27,7 +27,8 @@ class StrawberryChatBootstrap : PluginBootstrap {
         context.lifecycleManager.registerEventHandler(
             LifecycleEvents.COMMANDS,
             LifecycleEventHandler { commands ->
-                val worldCommand = Commands.literal("world")
+                val commandList = listOf(
+                Commands.literal("world")
                     .requires { sender -> sender.executor is Player && sender.sender.hasPermission("strawberrychat.world") }
                     .then(
                         Commands.argument("worldName", ArgumentTypes.world())
@@ -47,9 +48,9 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 )
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                    )
+                    ),
 
-                val velocityCommand = Commands.literal("velocity")
+                Commands.literal("velocity")
                     .requires { sender -> sender.sender.hasPermission("strawberrychat.velocity") }
                     .then(
                         Commands.argument("entities", ArgumentTypes.entities())
@@ -85,9 +86,9 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                             )
                                     )
                             )
-                    )
+                    ),
 
-                val crashCommand = Commands.literal("crash")
+                Commands.literal("crash")
                     .requires { sender -> sender.sender.hasPermission("strawberrychat.crash") }
                     .then(
                         Commands.argument("players", ArgumentTypes.players())
@@ -100,9 +101,9 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent crash packet to specified players!</aqua>")
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                    )
+                    ),
                 
-                val demoCommand = Commands.literal("demo")
+                Commands.literal("demo")
                     .requires { sender -> sender.sender.hasPermission("strawberrychat.demo") }
                     .then(
                         Commands.argument("players", ArgumentTypes.players())
@@ -115,9 +116,9 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent demo packet to specified players!</aqua>")
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                    )
+                    ),
                 
-                val creditsCommand = Commands.literal("credits")
+                Commands.literal("credits")
                     .requires { sender -> sender.sender.hasPermission("strawberrychat.credits") }
                     .then(
                         Commands.argument("players", ArgumentTypes.players())
@@ -130,9 +131,9 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent credits packet to specified players!</aqua>")
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                    )
+                    ),
 
-                val skullCommand = Commands.literal("skull")
+                Commands.literal("skull")
                     .requires { sender -> sender.executor is Player && sender.sender.hasPermission("strawberrychat.skull") }
                     .then(Commands.argument("players", ArgumentTypes.playerProfiles())
                         .executes { ctx ->
@@ -171,21 +172,25 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 }
                             }
                             Command.SINGLE_SUCCESS
-                        })
-                
+                        }),
 
-                val builtWorldCommand = worldCommand.build()
-                val builtVelocityCommand = velocityCommand.build()
-                val builtCrashCommand = crashCommand.build()
-                val builtDemoCommand = demoCommand.build()
-                val builtCreditsCommand = creditsCommand.build()
-                val builtSkullCommand = skullCommand.build()
-                commands.registrar().register(builtWorldCommand)
-                commands.registrar().register(builtVelocityCommand)
-                commands.registrar().register(builtCrashCommand)
-                commands.registrar().register(builtDemoCommand)
-                commands.registrar().register(builtCreditsCommand)
-                commands.registrar().register(builtSkullCommand)
+                Commands.literal("fly")
+                    .requires { sender -> sender.sender.hasPermission("strawberrychat.fly")}
+                    .then(Commands.argument("players", ArgumentTypes.players())
+                        .executes { ctx ->
+                            val players = ctx.getArgument("players", PlayerSelectorArgumentResolver::class.java)
+                                .resolve(ctx.getSource())
+                            players.forEach { player ->
+                                player.allowFlight = true
+                            }
+                            Command.SINGLE_SUCCESS
+                        })
+
+                )
+
+                commandList.forEach { command ->
+                    commands.registrar().register(command.build())
+                }
             }
         )
     }
