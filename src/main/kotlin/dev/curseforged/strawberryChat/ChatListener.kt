@@ -40,8 +40,7 @@ class ChatListener : Listener, ChatRenderer {
         message: Component,
         viewer: Audience
     ): Component {
-        val head = source.playerProfile.id?.let { Component.`object`(ObjectContents.playerHead(it)) }
-        val chead = head?.compact()  ?: Component.empty()
+        val head = (source.playerProfile.id?.let { Component.`object`(ObjectContents.playerHead(it)) } as Component)
         val playerTeam = source.scoreboard.getEntryTeam(source.name)
         val hoverEvent = sourceDisplayName
             .appendNewline()
@@ -69,7 +68,7 @@ class ChatListener : Listener, ChatRenderer {
             .color(if (greentext) NamedTextColor.GREEN else NamedTextColor.WHITE)
 
 
-        return chead
+        return head
             .append(Component.space())
             .append(displayName)
             .append(separator)
