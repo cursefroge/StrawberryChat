@@ -30,7 +30,7 @@ class StrawberryChat : JavaPlugin() {
         if (pluginConfig.getBoolean("disallow-kill-potions")) {
             server.pluginManager.registerEvents(PotionUseListener(), this)
         }
-        if (pluginConfig.getBoolean("send-prevents-reports") || pluginConfig.getBoolean("spoof-enforces-signatures")) {
+        if (pluginConfig.getBoolean("send-prevents-reports") || pluginConfig.getBoolean("spoof-enforces-signatures") || pluginConfig.getBoolean("spoof-op")) {
             addListener(Key.key("strawberrychat", "ping_handler")) { channel: Channel ->
                 channel.pipeline().addAfter("packet_handler", "strawberrychat_ping_handler", PingHandler())
             }

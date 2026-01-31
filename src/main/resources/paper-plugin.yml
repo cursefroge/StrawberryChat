@@ -1,7 +1,7 @@
 name: StrawberryChat
 version: '2.1.0'
 main: dev.curseforged.strawberryChat.StrawberryChat
-api-version: '1.21.5'
+api-version: '1.21.11'
 authors: [ cursefroge ]
 description: Custom chat plugin for The Strawberry Farm
 bootstrapper: dev.curseforged.strawberryChat.StrawberryChatBootstrap
@@ -23,4 +23,7 @@ permissions:
     default: op
   strawberrychat.world:
     description: Allows using /world to change the player's world
+    default: op
+  strawberrychat.allow-gamemode-change:
+    description: Allows using the gamemode switcher
     default: op

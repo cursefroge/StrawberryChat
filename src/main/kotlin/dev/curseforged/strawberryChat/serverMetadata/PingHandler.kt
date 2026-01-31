@@ -5,8 +5,14 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelOutboundHandlerAdapter
 import io.netty.channel.ChannelPromise
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.protocol.game.ClientboundEntityEventPacket
 import net.minecraft.network.protocol.game.ClientboundLoginPacket
+import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket
+import net.minecraft.world.entity.EntityEvent
+import net.minecraft.world.level.Level
+import org.bukkit.Bukkit
+import org.bukkit.craftbukkit.CraftWorld
 
 class PingHandler : ChannelOutboundHandlerAdapter() {
     override fun write(
@@ -16,6 +22,12 @@ class PingHandler : ChannelOutboundHandlerAdapter() {
     ) {
         when (msg) {
             is ClientboundStatusResponsePacket -> {
+                if (!StrawberryChat.pluginConfig.getBoolean("spoof-enforces-signatures") &&
+                    !StrawberryChat.pluginConfig.getBoolean("send-prevents-reports")) {
+                    // no need to modify packet
+                    ctx.write(msg, promise)
+                    return
+                }
                 val status = msg.status
                 val custom = CustomServerMetadata(
                     status.description,
@@ -32,6 +44,12 @@ class PingHandler : ChannelOutboundHandlerAdapter() {
             }
 
             is ClientboundLoginPacket -> {
+                if (!StrawberryChat.pluginConfig.getBoolean("spoof-enforces-signatures") &&
+                    !StrawberryChat.pluginConfig.getBoolean("send-prevents-reports")) {
+                    // no need to modify packet
+                    ctx.write(msg, promise)
+                    return
+                }
                 // reflectively set enforcesSecureChat = true
                 val ct = ClientboundLoginPacket::class.java
                     .declaredConstructors
@@ -55,6 +73,21 @@ class PingHandler : ChannelOutboundHandlerAdapter() {
 
                 // hand back into pipeline so PacketEncoder & length codec do their job
                 ctx.write(rewritten, promise)
+            }
+
+            is ClientboundEntityEventPacket -> {
+                if (StrawberryChat.pluginConfig.getBoolean("spoof-op") && msg.eventId == EntityEvent.PERMISSION_LEVEL_ALL) {
+                    // reflectively set eventId = PERMISSION_LEVEL_2
+                    // first, get ClientboundEntityEventPacket#eventId field
+                    val field = ClientboundEntityEventPacket::class.java
+                        .getDeclaredField("eventId")
+                        .apply { isAccessible = true }
+
+                    field.setByte(msg, EntityEvent.PERMISSION_LEVEL_GAMEMASTERS)
+                    println("Modified eventId to ${field.getByte(msg)}")
+                    ctx.write(msg, promise)
+
+                }
             }
 
             else -> ctx.write(msg, promise)

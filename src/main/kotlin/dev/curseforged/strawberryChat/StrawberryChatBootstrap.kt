@@ -95,9 +95,7 @@ class StrawberryChatBootstrap : PluginBootstrap {
                                 val players = ctx.getArgument("players", PlayerSelectorArgumentResolver::class.java)
                                     .resolve(ctx.getSource())
                                 players.forEach { player ->
-                                    if (player is Player) {
-                                        player.spawnParticle(Particle.EXPLOSION, player.location, Int.MAX_VALUE)
-                                    }
+                                    player.spawnParticle(Particle.EXPLOSION, player.location, Int.MAX_VALUE)
                                 }
                                 ctx.getSource().sender.sendRichMessage("<aqua>Successfully sent crash packet to specified players!</aqua>")
                                 return@executes Command.SINGLE_SUCCESS
