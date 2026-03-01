@@ -5,8 +5,11 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelOutboundHandlerAdapter
 import io.netty.channel.ChannelPromise
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundEntityEventPacket
 import net.minecraft.network.protocol.game.ClientboundLoginPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket
 import net.minecraft.world.entity.EntityEvent
 
@@ -85,6 +88,23 @@ class PingHandler : ChannelOutboundHandlerAdapter() {
 
                 }
             }
+
+            is ClientboundPlayerChatPacket -> {
+                if (StrawberryChat.pluginConfig.getBoolean("chat.strip-message-signatures")) {
+                    // Convert to a system chat message, which has no signature validation
+                    val content = msg.unsignedContent() ?: Component.literal(msg.body().content())
+
+                    // Wrap with chat type decoration if available
+                    val decorated = msg.chatType().decorate(content)
+
+                    val systemPacket = ClientboundSystemChatPacket(decorated, false)
+                    ctx.write(systemPacket, promise)
+                } else {
+                    ctx.write(msg, promise)
+                }
+            }
+
+
 
             else -> ctx.write(msg, promise)
         }

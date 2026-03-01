@@ -179,10 +179,11 @@ class StrawberryChatBootstrap : PluginBootstrap {
                     .then(Commands.argument("players", ArgumentTypes.players())
                         .executes { ctx ->
                             val players = ctx.getArgument("players", PlayerSelectorArgumentResolver::class.java)
-                                .resolve(ctx.getSource())
+                                .resolve(ctx.source)
                             players.forEach { player ->
-                                player.allowFlight = true
+                                player.allowFlight = !player.allowFlight
                             }
+                            ctx.source.sender.sendRichMessage("<aqua>Flight toggled for players!</aqua>")
                             Command.SINGLE_SUCCESS
                         })
 
