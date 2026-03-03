@@ -4,6 +4,7 @@ import dev.curseforged.strawberryChat.util.convertToReadableDate
 import dev.curseforged.strawberryChat.util.convertToReadableTime
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
+import net.fellbaum.jemoji.EmojiManager
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -53,19 +54,39 @@ class ChatListener : Listener, ChatRenderer {
             .append(Component.text("Message time: ")).append(Component.text(convertToReadableTime(System.currentTimeMillis())))
                 .color(NamedTextColor.GRAY)
                 .style { it.hoverEvent(null).build() }
-        
-        
-        // get message content
-        val messageContent = PlainTextComponentSerializer.plainText().serialize(message)
+
+
+        // get message content with emoji aliases replaced
+        val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
+        val messageContent = EmojiManager.replaceAliases(plainMessage) { alias, emojis ->
+            emojis.firstOrNull { it.discordAliases.contains(alias) }?.emoji ?: throw IllegalStateException()
+        }
+
+        // replace [item] with the held item component
+        val item = source.inventory.itemInMainHand
         val greentext = messageContent.startsWith(">")
-        
+        val textColor = if (greentext) NamedTextColor.GREEN else NamedTextColor.WHITE
+
+        var messageComponent = if (item.amount != 0 && messageContent.contains("[item]")) {
+            val itemComponent = item.displayName().hoverEvent(item)
+            val parts = messageContent.split("[item]")
+            var result = Component.empty()
+            for (i in parts.indices) {
+                if (i > 0) result = result.append(itemComponent)
+                if (parts[i].isNotEmpty()) result = result.append(Component.text(parts[i]))
+            }
+            result
+        } else {
+            Component.text(messageContent)
+        }
+        messageComponent = messageComponent.color(textColor)
+
+
+
         val displayName = source.teamDisplayName()
             .hoverEvent(hoverEvent)
 
         val separator = Component.text(": ")
-
-        val messageComponent = message
-            .color(if (greentext) NamedTextColor.GREEN else NamedTextColor.WHITE)
 
 
         return head
